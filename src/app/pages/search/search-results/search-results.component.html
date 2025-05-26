@@ -1,0 +1,60 @@
+<div class="search-results-container">
+  <div class="search-header">
+    <button mat-icon-button class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="search-form">
+      <mat-form-field appearance="outline" class="search-input">
+        <mat-label>{{ 'SEARCH.PLACEHOLDER' | translate }}</mat-label>
+        <input matInput [(ngModel)]="searchTerm" (keyup.enter)="updateSearch()">
+        <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" class="search-button" (click)="updateSearch()">
+        {{ 'SEARCH.BUTTON' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="results-info">
+    <h1 class="results-title">
+      <span *ngIf="totalResults > 0">{{ 'SEARCH.RESULTS_FOR' | translate }} "{{searchTerm}}"</span>
+      <span *ngIf="totalResults === 0 && !isLoading">{{ 'SEARCH.NO_RESULTS' | translate }} "{{searchTerm}}"</span>
+    </h1>
+    <p *ngIf="totalResults > 0" class="results-count">
+      {{ totalResults }} {{ totalResults === 1 ? ('SEARCH.RESULT' | translate) : ('SEARCH.RESULTS' | translate) }}
+    </p>
+  </div>
+
+  <div class="results-grid">
+    <div class="audio-card" *ngFor="let audio of searchResults">
+      <app-custom-audio-player
+        [audio]="audio"
+        [mediaBaseUrl]="mediaUrl"
+        [thumbnail]="audio?.post?.thumbnail || ''">
+      </app-custom-audio-player>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>{{ 'SEARCH.SEARCHING' | translate }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && searchResults.length === 0 && searchTerm" class="empty-results">
+    <mat-icon>search_off</mat-icon>
+    <h2>{{ 'SEARCH.NO_RESULTS_FOUND' | translate }}</h2>
+    <p>{{ 'SEARCH.TRY_DIFFERENT_KEYWORDS' | translate }}</p>
+  </div>
+
+  <div *ngIf="hasMore && searchResults.length > 0" class="load-more-container">
+    <button mat-stroked-button color="accent" (click)="loadMore()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">{{ 'SEARCH.LOAD_MORE' | translate }}</span>
+      <div *ngIf="isLoading" class="button-spinner"></div>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<mat-toolbar class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar-container">
+    <a class="navbar-logo" routerLink="/">
+      <mat-icon>music_note</mat-icon>
+      <span>Latmeyyat</span>
+    </a>
+
+    <nav class="navbar-items">
+      @if (isAdminAuthenticated) {
+      <a mat-flat-button class="nav-item" routerLink="admin/rawadeed" routerLinkActive="active">
+        <mat-icon>person</mat-icon>
+        <span>Rawadeed</span>
+      </a>
+
+      <a mat-flat-button class="nav-item" routerLink="admin/latmeyyat" routerLinkActive="active">
+        <mat-icon>library_music</mat-icon>
+        <span>Latmeyyat</span>
+      </a>
+      } @else {
+      <a mat-flat-button class="nav-item" routerLink="/" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      }
+
+      @if (!isAdminAuthenticated) {
+      <a mat-flat-button class="nav-item" routerLink="admin/auth/login" routerLinkActive="active">
+        <mat-icon>login</mat-icon>
+        <span>Login</span>
+      </a>
+      }
+
+      @if (isAdminAuthenticated) {
+      <button mat-flat-button class="nav-item logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+      }
+    </nav>
+
+    <div class="nav-actions">
+      <button mat-icon-button class="mobile-menu-button" (click)="toggleMobileMenu()">
+        <mat-icon>{{ isMobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+      </button>
+      <app-language-switcher></app-language-switcher>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Mobile menu with animation -->
+@if (isMobileMenuOpen) {
+<div class="mobile-menu-container" (click)="closeMobileMenu()">
+  <div class="mobile-menu" (click)="$event.stopPropagation()">
+    @if (isAdminAuthenticated) {
+    <a mat-flat-button class="nav-item" routerLink="admin/rawadeed" routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <mat-icon>person</mat-icon>
+      <span>Rawadeed</span>
+    </a>
+
+    <a mat-flat-button class="nav-item" routerLink="admin/latmeyyat" routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <mat-icon>library_music</mat-icon>
+      <span>Latmeyyat</span>
+    </a>
+    } @else {
+    <a mat-flat-button class="nav-item" routerLink="/" routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    }
+
+    @if (!isAdminAuthenticated) {
+    <a mat-flat-button class="nav-item" routerLink="admin/auth/login" routerLinkActive="active"
+      (click)="closeMobileMenu()">
+      <mat-icon>login</mat-icon>
+      <span>Login Admin</span>
+    </a>
+    }
+
+    @if (isAdminAuthenticated) {
+    <button mat-flat-button class="nav-item logout" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+    }
+  </div>
+</div>
+}

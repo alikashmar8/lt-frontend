@@ -1,0 +1,18 @@
+.lang-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-text {
+  font-size: 14px;
+}
+
+.active {
+  background-color: rgba(144, 238, 144, 0.1);
+  font-weight: 500;
+}
+
+:host {
+  display: inline-block;
+}

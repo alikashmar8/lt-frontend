@@ -1,0 +1,105 @@
+<div class="post-container">
+  <!-- Header with Navigation -->
+  <div class="post-header">
+    <div class="navigation-buttons">
+      <button mat-icon-button class="back-button" routerLink="/admin/latmeyyat">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="action-buttons">
+        <button mat-flat-button color="accent" class="edit-button"
+          [routerLink]="['/admin/latmeyyat', post?.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!post" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading post data...</p>
+  </div>
+
+  <div *ngIf="post" class="post-content">
+    <!-- Post Title and Thumbnail -->
+    <div class="post-intro">
+      <div class="post-title-section">
+        <h1 class="post-title">{{ post.title }}</h1>
+        <div class="post-meta">
+          <div class="post-author">
+            <mat-icon>person</mat-icon>
+            <span>{{ post.singer?.nameEn }} - {{ post.singer?.nameAr }}</span>
+          </div>
+          <div class="post-date" *ngIf="post.releaseDate">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ post.releaseDate | date:'longDate' }}</span>
+          </div>
+          <div class="post-date" *ngIf="post.releaseDateHijri">
+            <mat-icon>event</mat-icon>
+            <span>{{ getHijriDate(post.releaseDateHijri) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="thumbnail-container" *ngIf="post.thumbnail">
+        <img [src]="post.thumbnail" alt="{{ post.title }}" class="post-thumbnail" loading="lazy" />
+      </div>
+    </div>
+
+    <!-- Post Details -->
+    <div class="details-card">
+      <mat-tab-group animationDuration="300ms">
+        <mat-tab label="Details" *ngIf="post.description || post.location || post.event">
+          <div class="tab-content">
+            <div class="detail-item" *ngIf="post.description">
+              <h3>Description</h3>
+              <div class="detail-text">{{ post.description }}</div>
+            </div>
+            <div class="detail-item" *ngIf="post.location">
+              <h3>Location</h3>
+              <div class="detail-text">{{ post.location }}</div>
+            </div>
+            <div class="detail-item" *ngIf="post.event">
+              <h3>Event</h3>
+              <div class="detail-text">{{ post.event }}</div>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="Lyrics" *ngIf="post.lyrics">
+          <div class="tab-content">
+            <div class="detail-item">
+              <pre class="lyrics-text">{{ post.lyrics }}</pre>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <!-- Videos Section -->
+    <div class="media-section" *ngIf="post.videos?.length">
+      <h2 class="section-title">
+        <mat-icon>videocam</mat-icon>
+        Videos
+      </h2>
+      <div class="media-grid">
+        <div class="video-item" *ngFor="let video of post.videos">
+          <app-custom-video-player [video]="video" [mediaBaseUrl]="mediaUrl">
+          </app-custom-video-player>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audios Section -->
+    <div class="media-section" *ngIf="post.audios?.length">
+      <h2 class="section-title">
+        <mat-icon>audiotrack</mat-icon>
+        Audio
+      </h2>
+      <div class="audio-grid">
+        <div class="audio-item" *ngFor="let audio of post.audios">
+          <app-custom-audio-player [audio]="audio" [mediaBaseUrl]="mediaUrl" [thumbnail]="post.thumbnail || ''">
+          </app-custom-audio-player>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

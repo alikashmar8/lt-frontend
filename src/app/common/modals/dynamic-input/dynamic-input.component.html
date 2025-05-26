@@ -1,0 +1,94 @@
+<mat-dialog-content>
+  @if (passedData.label){
+    <h5 mat-dialog-title translate>{{ passedData.label }}</h5>
+  }
+
+  @if (passedData.inputType === InputType.TEXT){
+    <mat-form-field appearance="fill">
+      <mat-label>Enter text</mat-label>
+      <input matInput type="text" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  }
+  <!-- <div *ngIf="passedData.inputType === InputType.TEXT">
+    <mat-form-field appearance="fill">
+      <mat-label>Enter text</mat-label>
+      <input matInput type="text" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  </div> -->
+
+  @if (passedData.inputType === InputType.CHECKBOX){
+    <mat-checkbox [(ngModel)]="passedData.value">Check me</mat-checkbox>
+  }
+
+  <!-- <div *ngIf="passedData.inputType === InputType.CHECKBOX">
+    <mat-checkbox [(ngModel)]="passedData.value">Check me</mat-checkbox>
+  </div> -->
+
+
+  @if (passedData.inputType === InputType.NUMBER){
+    <mat-form-field appearance="fill">
+      <mat-label>Enter number</mat-label>
+      <input matInput type="number" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  }
+
+  <!-- <div *ngIf="passedData.inputType === InputType.NUMBER">
+    <mat-form-field appearance="fill">
+      <mat-label>Enter number</mat-label>
+      <input matInput type="number" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  </div> -->
+
+  @if (passedData.inputType === InputType.SELECT){
+    <mat-form-field appearance="fill">
+      <mat-label>Select an option</mat-label>
+      <mat-select [(ngModel)]="passedData.value">
+        <mat-option *ngFor="let option of passedData.options" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  }
+
+  <!-- <div *ngIf="passedData.inputType === InputType.SELECT">
+    <mat-form-field appearance="fill">
+      <mat-label>Select an option</mat-label>
+      <mat-select [(ngModel)]="passedData.value">
+        <mat-option *ngFor="let option of passedData.options" [value]="option.value">
+          {{ option.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div> -->
+
+
+  @if (passedData.inputType === InputType.IMAGE){
+    <img [src]="passedData.value" alt="no display" width="100px">
+    <input type="file" name="icon" id="icon" (change)="uploadImage($event)" required autofocus />
+  }
+
+  <!-- <div *ngIf="passedData.inputType === InputType.IMAGE">
+    <img [src]="passedData.value" alt="no display" width="100px">
+    <input type="file" name="icon" id="icon" (change)="uploadImage($event)" required autofocus />
+  </div> -->
+
+
+  @if (passedData.inputType === InputType.DATE){
+    <mat-form-field appearance="fill">
+      <mat-label>Select date and time</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  }
+
+  <!-- <div *ngIf="passedData.inputType === InputType.DATE">
+    <mat-form-field appearance="fill">
+      <mat-label>Select date and time</mat-label>
+      <input matInput type="datetime-local" [(ngModel)]="passedData.value">
+    </mat-form-field>
+  </div> -->
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+</mat-dialog-actions>

@@ -1,0 +1,294 @@
+/* Container styling */
+.custom-video-container {
+  position: relative;
+  width: 100%;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  aspect-ratio: 16/9;
+}
+
+button:hover {
+  background-color: transparent!important;
+}
+
+.custom-video-container.fullscreen {
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/* Video element */
+.video-element {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: #000;
+  object-fit: contain;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--accent-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error display */
+.error-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.error-icon {
+  font-size: 48px;
+  height: 48px;
+  width: 48px;
+  color: #ff5252;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  font-size: 16px;
+  max-width: 80%;
+}
+
+/* Play overlay */
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.play-button {
+  width: 70px;
+  height: 70px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+  background-color: rgba(144, 238, 144, 0.8);
+}
+
+.play-button .mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+/* Controls styling */
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  padding: 20px 16px 8px;
+  transition: opacity 0.3s ease;
+}
+
+.video-controls.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.video-controls.visible {
+  opacity: 1;
+}
+
+/* Progress bar */
+.progress-container {
+  position: relative;
+  height: 24px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.buffer-bar {
+  position: absolute;
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.4);
+  bottom: 11px;
+  z-index: 1;
+  transition: width 0.3s ease; /* Smooth transition for width changes */
+}
+
+.progress-slider {
+  width: 100%;
+  margin: 0;
+}
+
+::ng-deep .progress-slider .mdc-slider__track {
+  height: 3px !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__track-active {
+  background-color: var(--accent-color) !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__track-inactive {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Hide the thumb completely */
+::ng-deep .progress-slider .mdc-slider__thumb {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__thumb-knob {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Control buttons row */
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-controls,
+.right-controls {
+  display: flex;
+  align-items: center;
+}
+
+.left-controls button,
+.right-controls button {
+  color: white;
+}
+
+/* Volume slider */
+.volume-slider-container {
+  width: 80px;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+.volume-slider {
+  width: 80px;
+  height: 20px;
+  margin: 0;
+}
+
+::ng-deep .volume-slider .mdc-slider__track {
+  height: 3px !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__track-active {
+  background-color: var(--accent-color) !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__track-inactive {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__thumb {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__thumb-knob {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* Time display */
+.time-display {
+  font-size: 12px;
+  color: white;
+  margin-left: 10px;
+  min-width: 90px;
+}
+
+/* Video title bar */
+.video-title-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  padding: 8px 16px;
+}
+
+.video-title {
+  color: white;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.download-link {
+  text-decoration: none;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .volume-slider-container {
+    display: none;
+  }
+
+  .time-display {
+    font-size: 10px;
+    min-width: 70px;
+  }
+
+  .video-controls {
+    padding: 14px 10px 6px;
+  }
+}

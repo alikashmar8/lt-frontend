@@ -1,0 +1,82 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <mat-icon class="login-icon">lock</mat-icon>
+      <h1 class="login-title">{{ 'TITLES.ADMIN_LOGIN' | translate }}</h1>
+      <div translate>Latmeyyat</div>
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="login()" novalidate>
+      <div class="form-field">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'LABELS.EMAIL' | translate }}</mat-label>
+          <input
+            matInput
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            email
+            #emailInput="ngModel"
+            [ngClass]="{'invalid-input': emailInput.invalid && (emailInput.dirty || emailInput.touched)}"
+            placeholder="{{ 'LABELS.EMAIL' | translate }}">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)">
+            {{ 'MESSAGES.INVALID_EMAIL' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-field">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'LABELS.PASSWORD' | translate }}</mat-label>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            name="password"
+            [(ngModel)]="password"
+            required
+            #passwordInput="ngModel"
+            [ngClass]="{'invalid-input': passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)}"
+            placeholder="{{ 'LABELS.PASSWORD' | translate }}">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Toggle password visibility'"
+            tabindex="-1">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)">
+            {{ 'MESSAGES.REQUIRED_PASSWORD' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button
+          mat-flat-button
+          color="accent"
+          class="login-button"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoginLoading">
+          <span *ngIf="!isLoginLoading">{{ 'BUTTONS.LOGIN' | translate }}</span>
+          <div *ngIf="isLoginLoading" class="spinner-container">
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>{{ 'MESSAGES.LOADING' | translate }}</span>
+          </div>
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          (click)="onReset()"
+          class="reset-button">
+          {{ 'BUTTONS.RESET' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

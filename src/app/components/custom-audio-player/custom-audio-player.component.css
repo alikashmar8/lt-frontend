@@ -1,0 +1,421 @@
+.custom-audio-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure proper spacing between elements */
+  align-items: center; /* Center align content */
+  height: 100%; /* Ensure consistent height */
+  padding: 0px; /* Add padding for better spacing */
+  box-sizing: border-box; /* Include padding in height/width calculations */
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: transparent!important;
+}
+
+.custom-audio-container.has-error {
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+}
+
+/* .custom-audio-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+} */
+
+.audio-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Thumbnail and visualizer section */
+.audio-visual-section {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(45deg, #2c3e50, #34495e);
+  flex-shrink: 0;
+  height: 200px;
+}
+
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.thumbnail-container.visualizer-active {
+  background-color: #121212;
+}
+
+.audio-thumbnail {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.default-thumbnail {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  opacity: 0.6;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+canvas#audioVisualizer {
+  width: 100%;
+  height: 100%;
+  background-color: #1e1e1e;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--accent-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Play overlay */
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.thumbnail-container:hover .play-overlay {
+  opacity: 1;
+}
+
+.play-button {
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  transform: scale(0.9);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  opacity: 0.9;
+}
+
+.play-button:hover {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.play-button.playing {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.play-button .mat-icon {
+  font-size: 30px;
+  width: 28px;
+  height: 36px;
+  color: var(--primary-color);
+}
+
+/* Controls section */
+.audio-controls-section {
+  padding: 5px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.controls-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.audio-title {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 4px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Error message */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f44336;
+  margin-bottom: 16px;
+}
+
+.error-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+/* Progress bar */
+.progress-container {
+  position: relative;
+  height: 24px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.buffer-bar {
+  position: absolute;
+  height: 4px;
+  background-color: rgba(0, 0, 0, 0.1);
+  bottom: 11px;
+  z-index: 1;
+  transition: width 0.3s ease; /* Smooth transition for width changes */
+}
+
+.progress-slider {
+  width: 100%;
+  margin: 0;
+}
+
+::ng-deep .progress-slider .mdc-slider__track {
+  height: 3px !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__track-active {
+  background-color: var(--accent-color) !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__track-inactive {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Hide the thumb completely */
+::ng-deep .progress-slider .mdc-slider__thumb {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+}
+
+::ng-deep .progress-slider .mdc-slider__thumb-knob {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+/* Time row */
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+/* Controls row */
+.controls-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.control-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Make buttons slightly smaller to fit better */
+.controls-row button {
+  color: var(--primary-color);
+  transform: scale(0.95);
+}
+
+.controls-row button.play-control {
+  transform: scale(1.1);
+}
+
+.download-link {
+  text-decoration: none;
+}
+
+/* Volume control */
+.volume-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-icon {
+  color: var(--primary-color);
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.volume-slider {
+  flex: 0;
+  margin: 0;
+}
+
+::ng-deep .volume-slider .mdc-slider__track {
+  height: 3px !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__track-active {
+  background-color: var(--accent-color) !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__track-inactive {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__thumb {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+::ng-deep .volume-slider .mdc-slider__thumb-knob {
+  visibility: hidden !important;
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Active visualizer button */
+button.active-visualizer {
+  background-color: rgba(144, 238, 144, 0.2);
+  color: var(--accent-color);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .audio-content {
+    flex-direction: row;
+    height: 100%;
+  }
+
+  .audio-visual-section {
+    flex: 0 0 100px;
+    height: auto;
+    max-height: none;
+  }
+
+  .audio-controls-section {
+    flex: 1;
+    overflow: hidden;
+    min-width: 0; /* Critical for text overflow to work */
+  }
+
+  .audio-title {
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    padding: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .audio-content {
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .audio-visual-section {
+    height: 180px;
+    flex-shrink: 0;
+  }
+
+  .audio-controls-section {
+    padding: 12px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .controls-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .control-buttons-group {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-visual-section {
+    height: 150px;
+  }
+
+  .audio-controls-section {
+    padding: 10px;
+  }
+
+  .audio-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .time-row {
+    font-size: 10px;
+  }
+}
+
+/* Ensure all audio players have consistent height in a grid */
+:host {
+  height: 100%;
+  display: block;
+}

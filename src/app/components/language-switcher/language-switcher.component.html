@@ -1,0 +1,13 @@
+<button mat-button [matMenuTriggerFor]="langMenu" class="lang-button">
+  <mat-icon>language</mat-icon>
+  <span class="lang-text">{{ translationService.getCurrentLang() === 'ar' ? 'العربية' : 'English' }}</span>
+</button>
+
+<mat-menu #langMenu="matMenu" xPosition="before">
+  <button mat-menu-item (click)="switchLanguage('ar')" [class.active]="translationService.isCurrentLang('ar')">
+    <span>العربية</span>
+  </button>
+  <button mat-menu-item (click)="switchLanguage('en')" [class.active]="translationService.isCurrentLang('en')">
+    <span>English</span>
+  </button>
+</mat-menu>

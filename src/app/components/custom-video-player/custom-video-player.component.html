@@ -1,0 +1,85 @@
+<div class="custom-video-container" #videoContainer [class.fullscreen]="isFullscreen">
+  <!-- Video element -->
+  <video #videoPlayer class="video-element" [src]="src" preload="metadata" (click)="togglePlay()"></video>
+
+  <!-- Loading spinner -->
+  <div class="loading-spinner" *ngIf="isLoading && !hasError">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Error display -->
+  <div class="error-container" *ngIf="hasError">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <div class="error-message">{{ errorMessage }}</div>
+  </div>
+
+  <!-- Play/pause overlay button (displayed in center of video) -->
+  <div class="play-overlay" *ngIf="!isPlaying && showControls && !isLoading && !hasError" (click)="togglePlay()">
+    <button mat-icon-button class="play-button">
+      <mat-icon>play_arrow</mat-icon>
+    </button>
+  </div>
+
+  <!-- Video controls -->
+  <div class="video-controls" [class.visible]="showControls" [class.hidden]="!showControls">
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="buffer-bar" [style.width.%]="buffered"></div>
+      <mat-slider class="progress-slider" color="primary" [discrete]="false">
+        <input matSliderThumb [(ngModel)]="progressValue" (valueChange)="seek($event)">
+      </mat-slider>
+    </div>
+
+    <!-- Controls buttons -->
+    <div class="controls-row">
+      <div class="left-controls">
+        <button mat-icon-button (click)="togglePlay()" matTooltip="{{ isPlaying ? 'Pause' : 'Play' }}">
+          <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="stop()" matTooltip="Stop">
+          <mat-icon>stop</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="backward10s()" matTooltip="Backward 10s">
+          <mat-icon>replay_10</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="forward10s()" matTooltip="Forward 10s">
+          <mat-icon>forward_10</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="toggleMute()" matTooltip="{{ isMuted ? 'Unmute' : 'Mute' }}">
+          <mat-icon>{{ isMuted ? 'volume_off' : (volume > 50 ? 'volume_up' : 'volume_down') }}</mat-icon>
+        </button>
+
+        <div class="volume-slider-container">
+          <mat-slider class="volume-slider" color="primary" [discrete]="false" [min]="0" [max]="100">
+            <input matSliderThumb [(ngModel)]="volume" (valueChange)="setVolume($event)">
+          </mat-slider>
+        </div>
+
+        <div class="time-display">
+          {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+        </div>
+      </div>
+
+      <div class="right-controls">
+        <a *ngIf="downloadUrl" [href]="downloadUrl" [download]="downloadFilename" class="download-link">
+          <button mat-icon-button matTooltip="Download">
+            <mat-icon>download</mat-icon>
+          </button>
+        </a>
+
+        <button mat-icon-button (click)="toggleFullscreen()" matTooltip="{{ isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen' }}">
+          <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video title bar -->
+  <div class="video-title-bar" *ngIf="title && showControls">
+    <h3 class="video-title">{{ title }}</h3>
+  </div>
+</div>

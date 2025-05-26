@@ -1,0 +1,87 @@
+<div class="update-singer-container">
+  <div class="header-section">
+    <div class="title-section">
+      <button mat-icon-button class="back-button" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="page-title">Edit Radood</h1>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-section">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading radood data...</p>
+  </div>
+
+  <form *ngIf="!isLoading" [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
+    <div class="card-section">
+      <h5 class="section-title">Radood Information</h5>
+
+      <div class="form-row">
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name (English)</mat-label>
+            <input matInput formControlName="nameEn" placeholder="Enter name in English">
+            <mat-error *ngIf="updateForm.get('nameEn')?.hasError('required')">
+              English name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name (Arabic)</mat-label>
+            <input matInput formControlName="nameAr" placeholder="Enter name in Arabic">
+            <mat-error *ngIf="updateForm.get('nameAr')?.hasError('required')">
+              Arabic name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" placeholder="Enter description" rows="5"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <label class="image-label">Thumbnail Image</label>
+        <div class="thumbnail-section">
+          <div class="thumbnail-upload-container" (click)="thumbnailInput.click()">
+            <div *ngIf="!thumbnailPreview" class="thumbnail-placeholder">
+              <mat-icon>add_photo_alternate</mat-icon>
+              <p>Click to upload thumbnail</p>
+            </div>
+            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" alt="Thumbnail preview" class="thumbnail-preview">
+          </div>
+          <input type="file" #thumbnailInput class="file-input" (change)="onThumbnailSelect($event)" accept="image/png,image/jpeg,image/jpg">
+
+          <div class="thumbnail-actions">
+            <button *ngIf="thumbnailFile" type="button" mat-stroked-button color="warn" (click)="removeThumbnail($event)">
+              <mat-icon>replay</mat-icon>
+              Reset Thumbnail
+            </button>
+            <button *ngIf="thumbnailPreview && !thumbnailFile" type="button" mat-stroked-button color="warn" (click)="removeThumbnailCompletely($event)">
+              <mat-icon>delete</mat-icon>
+              Remove Thumbnail
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" mat-stroked-button class="reset-button" (click)="resetForm()" [disabled]="isSubmitting">
+        <mat-icon>restart_alt</mat-icon>
+        Reset
+      </button>
+      <button type="submit" mat-flat-button color="accent" class="submit-button" [disabled]="updateForm.invalid || isSubmitting">
+        <mat-icon *ngIf="!isSubmitting">save</mat-icon>
+        <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+        <span>{{ isSubmitting ? 'Updating...' : 'Update Radood' }}</span>
+      </button>
+    </div>
+  </form>
+</div>

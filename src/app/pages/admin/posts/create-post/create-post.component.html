@@ -1,0 +1,260 @@
+<div class="create-post-container">
+  <div class="modal-header">
+    <h4 class="modal-title" translate>Add New Post</h4>
+  </div>
+
+  <div class="modal-body">
+    <form>
+      <!-- Basic Information Section -->
+      <div class="card-section">
+        <h5 class="section-title" translate>Basic Information</h5>
+
+        <div class="form-group">
+          <label for="title" class="required" translate>Title</label>
+          <input type="text" class="form-control" name="title" id="title" [(ngModel)]="data.title" placeholder="Enter post title" />
+        </div>
+
+        <div class="form-group">
+          <label for="singerId" class="required" translate>Radood</label>
+          <mat-form-field appearance="outline" class="w-100 p-0">
+            <mat-select class="form-control m-0" translate [(ngModel)]="data.singerId" name="singerId" #singleSelect placeholder="Select a radood">
+              <div class="search-container p-2">
+                <mat-form-field class="w-100">
+                  <input matInput
+                         (input)="filterSingers($event)"
+                         (keydown)="handleInput($event)"
+                         placeholder="Search radood..."
+                         #searchInput>
+                  <button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch(searchInput)">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+
+              <mat-option *ngIf="isLoadingSingers" disabled>
+                <mat-spinner diameter="20"></mat-spinner> <span class="ml-2">Loading...</span>
+              </mat-option>
+
+              <mat-option *ngIf="filteredSingers?.length === 0 && !isLoadingSingers">
+                No radoods found. Try different search terms.
+              </mat-option>
+
+              <mat-option *ngFor="let singer of filteredSingers" [value]="singer.id">
+                {{singer.nameEn}} - {{singer.nameAr}}
+              </mat-option>
+
+              <mat-option *ngIf="(filteredSingers?.length ?? 0) < (singers?.length ?? 0) && (filteredSingers?.length ?? 0) > 0" (click)="showAllSingers()">
+                <mat-icon>list</mat-icon> <span class="ml-2">Show all results</span>
+              </mat-option>
+
+              <mat-option *ngIf="data.singerId" (click)="clearSingerSelection()" class="text-danger">
+                <mat-icon>clear</mat-icon> <span class="ml-2">Clear selection</span>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group">
+          <label for="description" translate>Description</label>
+          <textarea class="form-control" id="description" name="description"
+            [(ngModel)]="data.description" placeholder="Enter post description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="lyrics" translate>Lyrics</label>
+          <textarea class="form-control" id="lyrics" name="lyrics"
+            [(ngModel)]="data.lyrics" placeholder="Enter lyrics"></textarea>
+        </div>
+
+        <!-- Thumbnail Image -->
+        <div class="form-group">
+          <label for="thumbnail" translate>Thumbnail Image</label>
+          <div class="thumbnail-upload-container" (click)="thumbnailInput.click()">
+            <div *ngIf="!thumbnailPreview" class="thumbnail-placeholder">
+              <mat-icon>add_photo_alternate</mat-icon>
+              <p translate>Click to upload thumbnail</p>
+            </div>
+            <img *ngIf="thumbnailPreview" [src]="thumbnailPreview" alt="Thumbnail preview" class="thumbnail-preview" />
+          </div>
+          <input type="file" #thumbnailInput class="file-input" (change)="onThumbnailSelect($event)"
+            accept="image/png,image/jpeg,image/jpg" />
+          <div *ngIf="thumbnailFile" class="selected-file-info">
+            <span>{{ thumbnailFile.name }}</span>
+            <button mat-icon-button color="warn" (click)="removeThumbnail($event)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date and Location Section -->
+      <div class="card-section">
+        <h5 class="section-title" translate>Date and Location</h5>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="releaseDate" translate>Release Date</label>
+              <input type="date" class="form-control" name="releaseDate" id="releaseDate"
+                [(ngModel)]="formattedReleaseDate" />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="releaseDateHijri" translate>Release Date Hijri</label>
+              <div class="hijri-date-wrapper">
+                <mat-form-field class="custom-date-field" appearance="outline">
+                  <input matInput
+                    class="hijri-date-input"
+                    [matDatepicker]="dp"
+                    name="releaseDateHijri"
+                    [(ngModel)]="data.releaseDateHijri"
+                    (dateChange)="onHijriDateChange($event)"
+                    [max]="currentHijriDate"
+                    placeholder="YYYY/MM/DD" />
+                  <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                  <mat-datepicker #dp></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <!-- Add a display to show the currently selected date in a readable format -->
+              <small *ngIf="data.releaseDateHijri" class="text-muted hijri-date-display">
+                {{ data.releaseDateHijri | date:'yyyy-MM-dd' }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="location" translate>Location</label>
+              <input type="text" class="form-control" name="location" id="location"
+                [(ngModel)]="data.location" placeholder="Enter location" />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="event" translate>Event</label>
+              <input type="text" class="form-control" name="event" id="event"
+                [(ngModel)]="data.event" placeholder="Enter event name" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Upload Section -->
+      <div class="card-section">
+        <h5 class="section-title" translate>Media Files</h5>
+
+        <!-- Upload Progress -->
+        <div *ngIf="uploadProgress >= 0" class="upload-progress-container">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span translate>Uploading: {{ currentlyUploading }}</span>
+            <button mat-mini-fab color="warn" (click)="cancelUpload()" aria-label="Cancel upload">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </div>
+          <mat-progress-bar mode="determinate" [value]="uploadProgress" color="primary"></mat-progress-bar>
+        </div>
+
+        <div class="row">
+          <!-- Videos Section -->
+          <div class="col-md-6 mb-4">
+            <div class="card-section">
+              <h6 class="section-title" translate>Videos</h6>
+
+              <div class="file-upload-container" (click)="videoFileInput.click()">
+                <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #3f51b5;">video_library</mat-icon>
+                <p translate>Click to select video files</p>
+                <input type="file" #videoFileInput class="file-input" (change)="onFileSelect($event, 'video')"
+                  accept="video/*" multiple />
+              </div>
+
+              <div *ngIf="data.videos?.length" class="mt-3">
+                <h6 translate>Uploaded Videos:</h6>
+                <ul class="file-list">
+                  <li *ngFor="let video of data.videos; let i = index">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="media-title-section">
+                        <div *ngIf="!video.isEditing">
+                          <span class="media-title">{{ video.title }}</span>
+                          <button mat-icon-button color="primary" class="edit-title-btn" (click)="startEditingTitle('video', i)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                        </div>
+                        <div *ngIf="video.isEditing" class="edit-title-form">
+                          <input type="text" class="form-control edit-title-input" [(ngModel)]="video.title" name="videoTitle{{i}}" />
+                          <button mat-icon-button color="primary" class="save-title-btn" (click)="finishEditingTitle('video', i)">
+                            <mat-icon>check</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                      <span *ngIf="video.videoSize" class="text-muted">{{ video.videoSize }} MB</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audios Section -->
+          <div class="col-md-6">
+            <div class="card-section">
+              <h6 class="section-title" translate>Audios</h6>
+
+              <div class="file-upload-container" (click)="audioFileInput.click()">
+                <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #3f51b5;">audiotrack</mat-icon>
+                <p translate>Click to select audio files</p>
+                <input type="file" #audioFileInput class="file-input" (change)="onFileSelect($event, 'audio')"
+                  accept="audio/mp3,audio/*;capture=microphone" multiple />
+              </div>
+
+              <div *ngIf="data.audios?.length" class="mt-3">
+                <h6 translate>Uploaded Audios:</h6>
+                <ul class="file-list">
+                  <li *ngFor="let audio of data.audios; let i = index">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="media-title-section">
+                        <div *ngIf="!audio.isEditing">
+                          <span class="media-title">{{ audio.title }}</span>
+                          <button mat-icon-button color="primary" class="edit-title-btn" (click)="startEditingTitle('audio', i)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                        </div>
+                        <div *ngIf="audio.isEditing" class="edit-title-form">
+                          <input type="text" class="form-control edit-title-input" [(ngModel)]="audio.title" name="audioTitle{{i}}" />
+                          <button mat-icon-button color="primary" class="save-title-btn" (click)="finishEditingTitle('audio', i)">
+                            <mat-icon>check</mat-icon>
+                          </button>
+                        </div>
+                      </div>
+                      <span *ngIf="audio.audioSize" class="text-muted">{{ audio.audioSize }} MB</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="isStoreLoading || !data.title || !data.singerId" (click)="submitData()">
+      @if (isStoreLoading) {
+        <span>
+          <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+          <span translate>Processing...</span>
+        </span>
+      } @else {
+        <span>
+          <mat-icon>save</mat-icon>
+          <span translate>Save Post</span>
+        </span>
+      }
+    </button>
+  </div>
+</div>

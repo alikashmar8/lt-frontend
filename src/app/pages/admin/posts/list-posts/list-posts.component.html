@@ -1,0 +1,170 @@
+<div class="posts-list-container">
+  <div class="header-section">
+    <div class="title-section">
+      <h1 class="page-title" translate>Latmeyyat</h1>
+      <p class="subtitle">Manage latmeyyat posts and related content</p>
+    </div>
+    <div class="actions-section">
+      <button mat-flat-button class="add-button" routerLink="/admin/latmeyyat/create">
+        <mat-icon>add_circle</mat-icon>
+        <span translate>Add Post</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search posts..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        class="search-input">
+      <button *ngIf="searchTerm" mat-icon-button class="clear-button" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="view-options">
+      <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')">
+        <mat-icon>grid_view</mat-icon>
+      </button>
+      <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')">
+        <mat-icon>view_list</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Grid View -->
+  <div *ngIf="viewMode === 'grid'" class="grid-view">
+    <div *ngFor="let post of dataSource.data" class="post-card">
+      <div class="post-content" [routerLink]="['/admin/latmeyyat', post.id]">
+        <div class="post-thumbnail">
+          <img *ngIf="post.thumbnail" [src]="post.thumbnail" [alt]="post.title">
+          <div *ngIf="!post.thumbnail" class="placeholder-thumbnail">
+            <mat-icon>library_music</mat-icon>
+          </div>
+        </div>
+        <div class="post-info">
+          <h3 class="post-title">{{post.title}}</h3>
+          <div class="post-meta">
+            <div class="post-singer">
+              <mat-icon>person</mat-icon>
+              <span>{{post.singer?.nameEn}}</span>
+            </div>
+            <div class="post-date">
+              <mat-icon>calendar_today</mat-icon>
+              <span>{{post.createdAt | date:'mediumDate'}}</span>
+            </div>
+          </div>
+          <p *ngIf="post.description" class="post-description">{{post.description | slice:0:100}}{{post.description.length > 100 ? '...' : ''}}</p>
+        </div>
+      </div>
+      <div class="post-actions">
+        <button mat-icon-button color="accent" title="Edit" [routerLink]="['/admin/latmeyyat', post.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" title="Delete" (click)="deletePost(post)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="dataSource.data.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>No posts found</p>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="viewMode === 'list'" class="table-container">
+    <table mat-table [dataSource]="dataSource" class="posts-table">
+      <ng-container matColumnDef="thumbnail">
+        <th mat-header-cell *matHeaderCellDef> Thumbnail </th>
+        <td mat-cell *matCellDef="let post" class="thumbnail-cell">
+          <img *ngIf="post.thumbnail" [src]="post.thumbnail" [alt]="post.title" class="table-thumbnail">
+          <div *ngIf="!post.thumbnail" class="table-placeholder-thumbnail">
+            <mat-icon>library_music</mat-icon>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef translate> Title </th>
+        <td mat-cell *matCellDef="let post"> {{post.title}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="radood">
+        <th mat-header-cell *matHeaderCellDef translate> Radood </th>
+        <td mat-cell *matCellDef="let post"> {{post.singer.nameEn}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef translate> Upload Date </th>
+        <td mat-cell *matCellDef="let post"> {{post.createdAt | date:'medium'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef translate> Actions </th>
+        <td mat-cell *matCellDef="let post" class="actions-cell" (click)="$event.stopPropagation()">
+          <button mat-icon-button color="accent" title="Edit" [routerLink]="['/admin/latmeyyat', post.id, 'edit']">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" title="Delete" (click)="deletePost(post)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="clickable-row"
+          [routerLink]="['/admin/latmeyyat', row.id]"></tr>
+    </table>
+
+    <div *ngIf="dataSource.data.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>No posts found</p>
+    </div>
+  </div>
+
+  <div class="pagination-section">
+    <div class="pagination-controls">
+      <button mat-mini-fab [disabled]="currentPage === 1" (click)="fetchPosts(currentPage - 1)" class="pagination-button">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of getPaginationRange()"
+          [class.active]="page === currentPage"
+          mat-mini-fab
+          color="accent"
+          class="page-button"
+          (click)="fetchPosts(page)">
+          {{page}}
+        </button>
+      </div>
+
+      <button mat-mini-fab [disabled]="currentPage === totalPages" (click)="fetchPosts(currentPage + 1)" class="pagination-button">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div class="items-per-page">
+      <span class="per-page-label">Items per page:</span>
+      <mat-form-field appearance="outline" class="per-page-select">
+        <mat-select class="text-black" [(ngModel)]="filters.take" (selectionChange)="fetchPosts(1)">
+          <mat-option [value]="10">10</mat-option>
+          <mat-option [value]="30">30</mat-option>
+          <mat-option [value]="50">50</mat-option>
+          <mat-option [value]="100">100</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="total-items">
+        Total: {{totalItems}} <span translate>records</span>
+      </div>
+    </div>
+  </div>
+</div>
