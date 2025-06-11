@@ -11,6 +11,10 @@ Home Page
 <app-navbar></app-navbar>
 }
 
-<div [dir]="(translationService.currentDir | async) || 'auto'" class="app-container">
-  <router-outlet></router-outlet>
+<div [dir]="(translationService.currentDir | async) || 'auto'">
+  <app-global-audio-player></app-global-audio-player>
+
+  <div class="app-container">
+    <router-outlet></router-outlet>
+  </div>
 </div>
