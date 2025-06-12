@@ -1,108 +1,57 @@
-<div class="custom-audio-container" [class.has-error]="hasError">
-  <!-- Audio element (hidden) -->
+<div class="custom-audio-player">
+  <!-- Audio element -->
   <audio #audioPlayer [src]="src" preload="metadata"></audio>
 
-  <div class="audio-content">
-    <!-- Thumbnail and visualizer section -->
-    <div class="audio-visual-section">
-      <div class="thumbnail-container" [class.visualizer-active]="isVisualizerActive">
-        <!-- Thumbnail display when visualizer is inactive -->
-        <ng-container *ngIf="!isVisualizerActive">
-          <img *ngIf="thumbnail" [src]="thumbnail" [alt]="title" class="audio-thumbnail">
-          <mat-icon *ngIf="!thumbnail" class="default-thumbnail">music_note</mat-icon>
-        </ng-container>
+  <!-- Player content -->
+  <div class="player-content">
+    <!-- Thumbnail -->
+    <div class="thumbnail-section">
+      <img *ngIf="thumbnail" [src]="thumbnail" [alt]="title" class="audio-thumbnail">
+      <mat-icon *ngIf="!thumbnail" class="default-thumbnail">music_note</mat-icon>
+    </div>
 
-        <!-- Visualizer -->
-        <canvas #canvas *ngIf="isVisualizerActive" width="200" height="200" id="audioVisualizer"></canvas>
+    <!-- Info Section -->
+    <div class="info-section">
+      <h3 class="audio-title">{{ title }}</h3>
+      <p class="audio-subtitle">{{ audio?.post?.title || 'Unknown Album' }}</p>
+    </div>
 
-        <!-- Loading spinner -->
-        <div class="loading-spinner" *ngIf="isLoading && !hasError">
-          <div class="spinner"></div>
-        </div>
+    <!-- Controls Section -->
+    <div class="controls-section">
+      <button mat-icon-button (click)="backward10s()" matTooltip="Backward 10s">
+        <mat-icon>replay_10</mat-icon>
+      </button>
+      <button mat-icon-button (click)="togglePlay()" matTooltip="{{ isPlaying ? 'Pause' : 'Play' }}">
+        <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+      <button mat-icon-button (click)="forward10s()" matTooltip="Forward 10s">
+        <mat-icon>forward_10</mat-icon>
+      </button>
+    </div>
 
-        <!-- Play/pause overlay -->
-        <div class="play-overlay" *ngIf="!isLoading && !hasError" (click)="togglePlay()">
-          <button mat-icon-button class="play-button" [class.playing]="isPlaying">
-            <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
-          </button>
-        </div>
+    <!-- Progress Bar -->
+    <div class="progress-bar-section">
+      <mat-slider class="progress-slider" color="primary" [discrete]="false">
+        <input matSliderThumb [(ngModel)]="progressValue" (valueChange)="seek($event)">
+      </mat-slider>
+      <div class="time-display">
+        <span>{{ formatTime(currentTime) }}</span> / <span>{{ formatTime(duration) }}</span>
       </div>
     </div>
 
-    <!-- Controls section -->
-    <div class="audio-controls-section">
-      <div class="controls-content">
-        <!-- Title -->
-        <div>
-          <h3 class="audio-title" [title]="title" [attr.aria-label]="title">{{ title }}</h3>
-        </div>
-        <!-- Error message -->
-        <div class="error-message" *ngIf="hasError">
-          <mat-icon class="error-icon">error_outline</mat-icon>
-          <span>{{ errorMessage }}</span>
-        </div>
-
-        <!-- Progress bar -->
-        <div class="progress-container">
-          <div class="buffer-bar" [style.width.%]="buffered"></div>
-          <mat-slider class="progress-slider" color="primary" [disabled]="hasError" [discrete]="false">
-            <input matSliderThumb [(ngModel)]="progressValue" (valueChange)="seek($event)">
-          </mat-slider>
-        </div>
-
-        <div class="time-row">
-          <span class="current-time">{{ formatTime(currentTime) }}</span>
-          <span class="duration-time">{{ formatTime(duration) }}</span>
-        </div>
-
-        <!-- Controls buttons -->
-        <div class="controls-row">
-          <div class="control-buttons-group">
-            <button mat-icon-button (click)="backward10s()" matTooltip="Backward 10s" [disabled]="hasError">
-              <mat-icon>replay_10</mat-icon>
-            </button>
-
-            <button mat-icon-button (click)="togglePlay()" matTooltip="{{ isPlaying ? 'Pause' : 'Play' }}"
-              [disabled]="hasError" class="play-control">
-              <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
-            </button>
-
-            <button mat-icon-button (click)="forward10s()" matTooltip="Forward 10s" [disabled]="hasError">
-              <mat-icon>forward_10</mat-icon>
-            </button>
-
-            <button mat-icon-button (click)="toggleMute()" matTooltip="{{ isMuted ? 'Unmute' : 'Mute' }}"
-              [disabled]="hasError">
-              <mat-icon>{{ isMuted ? 'volume_off' : (volume > 50 ? 'volume_up' : 'volume_down') }}</mat-icon>
-            </button>
-          </div>
-
-          <div class="control-buttons-group">
-            <button *ngIf="isVisualizerSupported" mat-icon-button (click)="toggleVisualizer()"
-              [class.active-visualizer]="isVisualizerActive"
-              matTooltip="{{ isVisualizerActive ? 'Hide Visualizer' : 'Show Visualizer' }}" [disabled]="hasError">
-              <mat-icon>equalizer</mat-icon>
-            </button>
-
-            <a *ngIf="downloadUrl" [href]="downloadUrl" [download]="downloadFilename" class="download-link">
-              <button mat-icon-button matTooltip="Download" [disabled]="hasError">
-                <mat-icon>download</mat-icon>
-              </button>
-            </a>
-          </div>
-        </div>
-
-        <!-- Volume slider -->
-        <div class="volume-container">
-          <mat-icon class="volume-icon">
-            {{ isMuted ? 'volume_off' : (volume > 50 ? 'volume_up' : 'volume_down') }}
-          </mat-icon>
-          <mat-slider class="volume-slider" color="primary" [discrete]="false" [min]="0" [max]="100"
-            [disabled]="hasError">
-            <input matSliderThumb [(ngModel)]="volume" (valueChange)="setVolume($event)">
-          </mat-slider>
-        </div>
-      </div>
+    <!-- Volume and Download -->
+    <div class="extra-controls">
+      <button mat-icon-button (click)="toggleMute()" matTooltip="{{ isMuted ? 'Unmute' : 'Mute' }}">
+        <mat-icon>{{ isMuted ? 'volume_off' : (volume > 50 ? 'volume_up' : 'volume_down') }}</mat-icon>
+      </button>
+      <mat-slider class="volume-slider" color="primary" [discrete]="false" [min]="0" [max]="100">
+        <input matSliderThumb [(ngModel)]="volume" (valueChange)="setVolume($event)">
+      </mat-slider>
+      <a *ngIf="downloadUrl" [href]="downloadUrl" [download]="downloadFilename" class="download-link">
+        <button mat-icon-button matTooltip="Download">
+          <mat-icon>download</mat-icon>
+        </button>
+      </a>
     </div>
   </div>
 </div>
