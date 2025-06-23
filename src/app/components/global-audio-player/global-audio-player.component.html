@@ -1,0 +1,24 @@
+<div class="global-audio-player" *ngIf="currentAudio">
+  <div class="audio-info">
+    <img [src]="currentAudio.post?.thumbnail || 'assets/default-thumbnail.jpg'" class="audio-thumbnail">
+    <div class="audio-details">
+      <h3 class="audio-title">{{ currentAudio.title }}</h3>
+      <p class="audio-subtitle">{{ currentAudio.post?.title || 'Unknown Album' }}</p>
+    </div>
+  </div>
+  <div class="audio-controls">
+    <button mat-icon-button (click)="togglePlay()" [disableRipple]="true">
+      <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+    </button>
+    <div class="seek-slider-container">
+      <span class="time-display">{{ formatTime(currentTime) }}</span>
+      <mat-slider class="progress-slider" [discrete]="false" [max]="duration">
+        <input matSliderThumb [(ngModel)]="currentTime" (valueChange)="seek($event)">
+      </mat-slider>
+      <span class="time-display">{{ formatTime(duration) }}</span>
+    </div>
+    <!-- <mat-slider class="volume-slider">
+      <input matSliderThumb [(ngModel)]="volume" (valueChange)="setVolume($event)">
+    </mat-slider> -->
+  </div>
+</div>
