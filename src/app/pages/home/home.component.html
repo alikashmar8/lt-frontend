@@ -48,10 +48,15 @@
     </div>
 
     <div class="horizontal-scroll-container" #recentAudiosContainer (scroll)="onRecentAudiosScroll()">
-      <div class="audio-card" *ngFor="let audio of recentAudios; let i = index">
-        <app-custom-audio-player [audio]="audio" [mediaBaseUrl]="mediaUrl" [thumbnail]="audio?.post?.thumbnail || ''"
-          (click)="setCurrentAudio(audio, i, 'recent')">
-        </app-custom-audio-player>
+      <div class="audio-card" *ngFor="let audio of recentAudios">
+        <div class="audio-thumbnail" [style.backgroundImage]="'url(' + (audio?.post?.thumbnail || 'assets/default-thumbnail.jpg') + ')'">
+          <div class="audio-overlay">
+            <span class="audio-title">{{ audio.title }}</span>
+            <button mat-icon-button class="no-hover-effect" (click)="globalAudioService.playAudio(audio)" [disableRipple]="true">
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="isLoadingRecentAudios" class="loading-indicator">
