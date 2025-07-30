@@ -142,22 +142,51 @@
 
 /* Audio Cards */
 .audio-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Ensure proper spacing between elements */
-  align-items: center; /* Center align content */
-  min-width: 450px; /* Ensure consistent width */
-  height: 170px; /* Adjust height for better display */
-  border-radius: 10px;
+  position: relative;
+  width: 300px;
+  height: 200px;
+  border-radius: 8px;
   overflow: hidden;
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* .audio-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 } */
+
+.audio-thumbnail {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+}
+
+.audio-overlay {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.audio-title {
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.audio-overlay button {
+  color: white;
+}
 
 /* Singer Cards */
 .singer-card {
@@ -170,11 +199,6 @@
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-/* .singer-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-} */
 
 .singer-card-inner {
   cursor: pointer;
