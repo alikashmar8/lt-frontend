@@ -30,6 +30,7 @@ import {
 } from '@ngx-translate/core';
 import { TranslationService } from './services/translation.service';
 import { BidiModule, Dir } from '@angular/cdk/bidi';
+import { GlobalAudioPlayerComponent } from './components/global-audio-player/global-audio-player.component';
 
 @Component({
   selector: 'app-root',
@@ -49,6 +50,7 @@ import { BidiModule, Dir } from '@angular/cdk/bidi';
     TranslatePipe,
     TranslateDirective,
     BidiModule,
+    GlobalAudioPlayerComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
