@@ -1,186 +1,214 @@
-<div class="home-container">
-  <!-- Hero Banner with Search -->
-  <section class="hero-banner">
-    <div class="hero-content">
+<!-- Hero Banner with Search -->
+<section class="hero-banner">
+  <div class="hero-content">
+    <div class="hero-text">
       <h1 class="hero-title" translate>{{ 'TITLES.APP_TITLE' | translate }}</h1>
       <p class="hero-subtitle" translate>{{ 'HOME.SUBTITLE' | translate }}</p>
-
-      <div class="search-container">
-        <mat-form-field appearance="outline" class="search-input">
-          <mat-label>{{ 'SEARCH.PLACEHOLDER' | translate }}</mat-label>
-          <input matInput [(ngModel)]="searchTerm" (keyup.enter)="search()">
-          <button *ngIf="searchTerm" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-icon matPrefix>search</mat-icon>
-        </mat-form-field>
-
-        <button mat-raised-button color="accent" class="search-button" (click)="search()">
-          {{ 'SEARCH.BUTTON' | translate }}
+      <div class="hero-features">
+        <div class="feature-item">
+          <mat-icon>library_music</mat-icon>
+          <span translate>{{ 'HOME.FEATURE_1' | translate }}</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>shuffle</mat-icon>
+          <span translate>{{ 'HOME.FEATURE_2' | translate }}</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>people</mat-icon>
+          <span translate>{{ 'HOME.FEATURE_3' | translate }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-graphic">
+        <mat-icon class="floating-icon icon-1">music_note</mat-icon>
+        <mat-icon class="floating-icon icon-2">album</mat-icon>
+        <mat-icon class="floating-icon icon-3">headphones</mat-icon>
+        <div class="hero-image-placeholder">
+          <mat-icon>queue_music</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="search-overlay"> -->
+  <div class="search-overlay">
+    <div class="search-container">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="search-input" placeholder="{{ 'SEARCH.PLACEHOLDER' | translate }}"
+          [(ngModel)]="searchTerm" (keyup.enter)="search()">
+        <button *ngIf="searchTerm" class="clear-button" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
         </button>
       </div>
+      <button class="search-button" (click)="search()">
+        {{ 'SEARCH.BUTTON' | translate }}
+      </button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Autoplay Control -->
-  <div class="autoplay-control">
-    <button mat-button (click)="toggleAutoplay()" [class.active]="autoplayEnabled">
-      <mat-icon>{{ autoplayEnabled ? 'repeat_on' : 'repeat' }}</mat-icon>
-      <span>{{ 'PLAYER.AUTOPLAY' | translate }} {{ autoplayEnabled ? 'ON' : 'OFF' }}</span>
-    </button>
+<!-- Autoplay Control -->
+
+<div class="autoplay-control">
+  <button mat-button (click)="toggleAutoplay()" [class.active]="autoplayEnabled" [class.red-button]>
+    <mat-icon>{{ autoplayEnabled ? 'repeat_on' : 'repeat' }}</mat-icon>
+    <span>{{ 'PLAYER.AUTOPLAY' | translate }} {{ autoplayEnabled ? 'ON' : 'OFF' }}</span>
+  </button>
+</div>
+
+
+<!-- <div class="autoplay-control">
+  <div *ngIf="isLoadingRecentAudios" class="loading-indicator">
+    <mat-icon>refresh</mat-icon>
   </div>
 
-  <!-- Recent Uploads Section -->
-  <section class="content-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <mat-icon>new_releases</mat-icon>
-        {{ 'HOME.RECENT_UPLOADS' | translate }}
-      </h2>
-      <!-- Mobile scroll indicators -->
-      <div class="scroll-indicators">
-        <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
-        <div class="scroll-indicator-arrows">
-          <mat-icon>chevron_left</mat-icon>
-          <mat-icon>chevron_right</mat-icon>
-        </div>
+  <div *ngIf="!isLoadingRecentAudios && recentAudios.length === 0" class="empty-state">
+    <mat-icon>music_off</mat-icon>
+    <p>{{ 'HOME.NO_RECENT_AUDIOS' | translate }}</p>
+  </div>
+</div> -->
+<!-- </section> -->
+
+
+<!-- Recent Uploads Section -->
+<section class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">
+      <mat-icon>new_releases</mat-icon>
+      {{ 'HOME.RECENT_UPLOADS' | translate }}
+    </h2>
+    <!-- Mobile scroll indicators -->
+    <div class="scroll-indicators">
+      <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
+      <div class="scroll-indicator-arrows">
+        <mat-icon>chevron_left</mat-icon>
+        <mat-icon>chevron_right</mat-icon>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-scroll-container" #recentAudiosContainer (scroll)="onRecentAudiosScroll()">
-      <div class="audio-card" *ngFor="let audio of recentAudios">
-        <div class="audio-thumbnail" [style.backgroundImage]="'url(' + (audio?.post?.thumbnail || 'assets/default-thumbnail.jpg') + ')'">
-          <div class="audio-overlay">
-            <span class="audio-title">{{ audio.title }}</span>
-            <button mat-icon-button class="no-hover-effect" (click)="globalAudioService.playAudio(audio)" [disableRipple]="true">
-              <mat-icon>play_arrow</mat-icon>
-            </button>
+  <div class="horizontal-scroll-container" #recentAudiosContainer (scroll)="onRecentAudiosScroll()">
+    <div class="audio-card" *ngFor="let audio of recentAudios; let i = index">
+      <app-custom-audio-player [audio]="audio" (click)="setCurrentAudio(audio, i, 'recent')"></app-custom-audio-player>
+    </div>
+
+    <div *ngIf="isLoadingRecentAudios" class="loading-indicator">
+      <mat-icon>refresh</mat-icon>
+    </div>
+
+    <div *ngIf="!isLoadingRecentAudios && recentAudios.length === 0" class="empty-state">
+      <mat-icon>music_off</mat-icon>
+      <p>{{ 'HOME.NO_RECENT_AUDIOS' | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Random Audios Section -->
+<section class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">
+      <mat-icon>shuffle</mat-icon>
+      {{ 'HOME.RANDOM_AUDIOS' | translate }}
+    </h2>
+    <!-- Mobile scroll indicators -->
+    <div class="scroll-indicators">
+      <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
+      <div class="scroll-indicator-arrows">
+        <mat-icon>chevron_left</mat-icon>
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <div class="horizontal-scroll-container" #randomAudiosContainer (scroll)="onRandomAudiosScroll()">
+    <div class="audio-card" *ngFor="let audio of randomAudios; let i = index">
+      <app-custom-audio-player [audio]="audio" (click)="setCurrentAudio(audio, i, 'random')"></app-custom-audio-player>
+    </div>
+
+    <div *ngIf="isLoadingRandomAudios" class="loading-indicator">
+      <mat-icon>refresh</mat-icon>
+    </div>
+
+    <div *ngIf="!isLoadingRandomAudios && randomAudios.length === 0" class="empty-state">
+      <mat-icon>music_off</mat-icon>
+      <p>{{ 'HOME.NO_RANDOM_AUDIOS' | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Top Played Audios Section -->
+<section class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">
+      <mat-icon>trending_up</mat-icon>
+      {{ 'HOME.TOP_PLAYED' | translate }}
+    </h2>
+    <!-- Mobile scroll indicators -->
+    <div class="scroll-indicators">
+      <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
+      <div class="scroll-indicator-arrows">
+        <mat-icon>chevron_left</mat-icon>
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <div class="horizontal-scroll-container" #topAudiosContainer (scroll)="onTopAudiosScroll()">
+    <div class="audio-card" *ngFor="let audio of topAudios; let i = index">
+      <app-custom-audio-player [audio]="audio" (click)="setCurrentAudio(audio, i, 'top')"></app-custom-audio-player>
+    </div>
+
+    <div *ngIf="isLoadingTopAudios" class="loading-indicator">
+      <mat-icon>refresh</mat-icon>
+    </div>
+
+    <div *ngIf="!isLoadingTopAudios && topAudios.length === 0" class="empty-state">
+      <mat-icon>music_off</mat-icon>
+      <p>{{ 'HOME.NO_TOP_AUDIOS' | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Singers Section -->
+<section class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">
+      <mat-icon>people</mat-icon>
+      {{ 'HOME.FEATURED_SINGERS' | translate }}
+    </h2>
+    <!-- Mobile scroll indicators -->
+    <div class="scroll-indicators">
+      <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
+      <div class="scroll-indicator-arrows">
+        <mat-icon>chevron_left</mat-icon>
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <div class="horizontal-scroll-container" #randomSingersContainer (scroll)="onRandomSingersScroll()">
+    <div class="singer-card" *ngFor="let singer of randomSingers">
+      <div class="singer-card-inner" (click)="goToSinger(singer.id)">
+        <div class="singer-image">
+          <img *ngIf="singer.thumbnail" [src]="singer.thumbnail" [alt]="translationService.getCurrentLang() === 'ar' ? singer.nameAr : singer.nameEn">
+          <div *ngIf="!singer.thumbnail" class="placeholder-image">
+            <mat-icon>person</mat-icon>
           </div>
         </div>
-      </div>
-
-      <div *ngIf="isLoadingRecentAudios" class="loading-indicator">
-        <mat-icon>refresh</mat-icon>
-      </div>
-
-      <div *ngIf="!isLoadingRecentAudios && recentAudios.length === 0" class="empty-state">
-        <mat-icon>music_off</mat-icon>
-        <p>{{ 'HOME.NO_RECENT_AUDIOS' | translate }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Random Audios Section -->
-  <section class="content-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <mat-icon>shuffle</mat-icon>
-        {{ 'HOME.RANDOM_AUDIOS' | translate }}
-      </h2>
-      <!-- Mobile scroll indicators -->
-      <div class="scroll-indicators">
-        <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
-        <div class="scroll-indicator-arrows">
-          <mat-icon>chevron_left</mat-icon>
-          <mat-icon>chevron_right</mat-icon>
+        <div class="singer-info">
+          <h3 class="singer-name">{{ translationService.getCurrentLang() === 'ar' ? singer.nameAr : singer.nameEn }}</h3>
         </div>
       </div>
     </div>
 
-    <div class="horizontal-scroll-container" #randomAudiosContainer (scroll)="onRandomAudiosScroll()">
-      <div class="audio-card" *ngFor="let audio of randomAudios; let i = index">
-        <app-custom-audio-player [audio]="audio" [mediaBaseUrl]="mediaUrl" [thumbnail]="audio?.post?.thumbnail || ''"
-          (click)="setCurrentAudio(audio, i, 'random')">
-        </app-custom-audio-player>
-      </div>
-
-      <div *ngIf="isLoadingRandomAudios" class="loading-indicator">
-        <mat-icon>refresh</mat-icon>
-      </div>
-
-      <div *ngIf="!isLoadingRandomAudios && randomAudios.length === 0" class="empty-state">
-        <mat-icon>music_off</mat-icon>
-        <p>{{ 'HOME.NO_RANDOM_AUDIOS' | translate }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Top Played Audios Section -->
-  <section class="content-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <mat-icon>trending_up</mat-icon>
-        {{ 'HOME.TOP_PLAYED' | translate }}
-      </h2>
-      <!-- Mobile scroll indicators -->
-      <div class="scroll-indicators">
-        <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
-        <div class="scroll-indicator-arrows">
-          <mat-icon>chevron_left</mat-icon>
-          <mat-icon>chevron_right</mat-icon>
-        </div>
-      </div>
+    <div *ngIf="isLoadingRandomSingers" class="loading-indicator">
+      <mat-icon>refresh</mat-icon>
     </div>
 
-    <div class="horizontal-scroll-container" #topAudiosContainer (scroll)="onTopAudiosScroll()">
-      <div class="audio-card" *ngFor="let audio of topAudios; let i = index">
-        <app-custom-audio-player [audio]="audio" [mediaBaseUrl]="mediaUrl" [thumbnail]="audio?.post?.thumbnail || ''"
-          (click)="setCurrentAudio(audio, i, 'top')">
-        </app-custom-audio-player>
-      </div>
-
-      <div *ngIf="isLoadingTopAudios" class="loading-indicator">
-        <mat-icon>refresh</mat-icon>
-      </div>
-
-      <div *ngIf="!isLoadingTopAudios && topAudios.length === 0" class="empty-state">
-        <mat-icon>music_off</mat-icon>
-        <p>{{ 'HOME.NO_TOP_AUDIOS' | translate }}</p>
-      </div>
+    <div *ngIf="!isLoadingRandomSingers && randomSingers.length === 0" class="empty-state">
+      <mat-icon>people_off</mat-icon>
+      <p>{{ 'HOME.NO_SINGERS' | translate }}</p>
     </div>
-  </section>
-
-  <!-- Featured Singers Section -->
-  <section class="content-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <mat-icon>people</mat-icon>
-        {{ 'HOME.FEATURED_SINGERS' | translate }}
-      </h2>
-      <!-- Mobile scroll indicators -->
-      <div class="scroll-indicators">
-        <div class="scroll-indicator-text">{{ 'HOME.SWIPE_TO_VIEW_MORE' | translate }}</div>
-        <div class="scroll-indicator-arrows">
-          <mat-icon>chevron_left</mat-icon>
-          <mat-icon>chevron_right</mat-icon>
-        </div>
-      </div>
-    </div>
-
-    <div class="horizontal-scroll-container" #randomSingersContainer (scroll)="onRandomSingersScroll()">
-      <div class="singer-card" *ngFor="let singer of randomSingers">
-        <div class="singer-card-inner" (click)="goToSinger(singer.id)">
-          <div class="singer-image">
-            <img *ngIf="singer.thumbnail" [src]="singer.thumbnail" [alt]="singer.nameEn">
-            <div *ngIf="!singer.thumbnail" class="placeholder-image">
-              <mat-icon>person</mat-icon>
-            </div>
-          </div>
-          <div class="singer-info">
-            <h3 class="singer-name">{{singer.nameEn}}</h3>
-            <h4 class="singer-name-ar">{{singer.nameAr}}</h4>
-          </div>
-        </div>
-      </div>
-
-      <div *ngIf="isLoadingRandomSingers" class="loading-indicator">
-        <mat-icon>refresh</mat-icon>
-      </div>
-
-      <div *ngIf="!isLoadingRandomSingers && randomSingers.length === 0" class="empty-state">
-        <mat-icon>people_off</mat-icon>
-        <p>{{ 'HOME.NO_SINGERS' | translate }}</p>
-      </div>
-    </div>
-  </section>
-</div>
+  </div>
+</section>
